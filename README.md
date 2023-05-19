@@ -1,66 +1,68 @@
 # coffee_maker_project
 This is a simulation of a coffee making machine, it allows you to make 3 different flavors of coffee {Latte, Cappuccino, Espresso} and also allows you to view the resources left to make your coffee.
 
+# Coffee Shop Application
 
-# Coffee Maker
+The provided Python script is an interactive coffee shop application that allows users to place drink orders, process payments, and prepare the requested beverages. It utilizes the following modules:
 
-The `CoffeeMaker` class models a coffee-making machine. It allows you to check the availability of resources, make coffee orders, and deduct the required ingredients from the available resources.
+- `Menu`: Manages the menu options and drink selection.
+- `MenuItem`: Represents a single drink item with its name, ingredients, and cost.
+- `CoffeeMaker`: Models the coffee-making machine and handles the resources required for drink preparation.
+- `MoneyMachine`: Simulates the money processing system, handling payments and providing change.
 
 ## Usage
 
-Instantiate a `CoffeeMaker` object to create a coffee-making machine with initial resource quantities. The available resources include water, milk, and coffee. Here's an example:
+1. Import the necessary classes from the respective modules:
 
 ```python
-coffee_machine = CoffeeMaker()
+from menu import Menu, MenuItem
+from coffee_maker import CoffeeMaker
+from money_machine import MoneyMachine
 ```
 
-### Reporting Resources
-
-You can print a report of the available resources using the `report()` method. It provides the current quantities of water, milk, and coffee in milliliters (ml) and grams (g), respectively.
+2. Create instances of the required classes:
 
 ```python
-coffee_machine.report()
+my_money_machine = MoneyMachine()
+my_coffee_maker = CoffeeMaker()
+menu = Menu()
 ```
 
-### Checking Resource Sufficiency
-
-To determine if a coffee order can be fulfilled based on the available resources, use the `is_resource_sufficient(drink)` method. Pass the drink object as an argument, which should have an `ingredients` attribute containing the required resources. The method returns `True` if the order can be made or `False` if the ingredients are insufficient.
+3. Start the coffee shop application by setting the `is_on` flag to `True`:
 
 ```python
-if coffee_machine.is_resource_sufficient(drink):
-    print("Order can be made.")
-else:
-    print("Insufficient resources for the order.")
+is_on = True
 ```
 
-### Making Coffee
-
-To make coffee, use the `make_coffee(order)` method. Pass the order object as an argument, which should have a `name` attribute representing the drink name and an `ingredients` attribute containing the required resources. The method deducts the required ingredients from the available resources and outputs a message indicating the prepared drink.
+4. Enter the main loop, where the user can select options from the menu:
 
 ```python
-coffee_machine.make_coffee(order)
+while is_on:
+    options = menu.get_items()
+    choice = input(f"What would you like? ({options}): ").lower()
+
+    if choice == "off":
+        is_on = False
+
+    elif choice == "report":
+        my_money_machine.report()
+        my_coffee_maker.report()
+
+    else:
+        drink = menu.find_drink(choice)
+        if my_coffee_maker.is_resource_sufficient(drink):
+            if my_money_machine.make_payment(drink.cost):
+                my_coffee_maker.make_coffee(drink)
 ```
 
-## Example
+The application provides the following functionality:
 
-Here's an example demonstrating the usage of the `CoffeeMaker` class:
+- Entering "off" shuts down the application.
+- Entering "report" generates reports for the money machine and coffee maker, displaying available resources and financial information.
+- Choosing a drink option deducts the required resources from the coffee maker, processes the payment using the money machine, and prepares the selected beverage if sufficient resources are available.
 
-```python
-# Instantiate a CoffeeMaker object
-coffee_machine = CoffeeMaker()
+Note: Ensure that the `MenuItem` and `Drink` classes, referred to in the code, are defined appropriately with the necessary attributes.
 
-# Print resource report
-coffee_machine.report()
+## Disclaimer
 
-# Create a drink order
-order = Drink("Latte", {"water": 50, "milk": 100, "coffee": 25})
-
-# Check resource sufficiency
-if coffee_machine.is_resource_sufficient(order):
-    # Make coffee
-    coffee_machine.make_coffee(order)
-else:
-    print("Insufficient resources for the order.")
-```
-
-Please note that the `Drink` class used in the example is not provided in the code. You would need to define it separately with the appropriate attributes for the drink name and required ingredients.
+Please be aware that this script provides a simplified demonstration of a coffee shop application and does not include all functionalities and edge cases that a real-world application would require. It serves as a starting point for building a more comprehensive system to handle various scenarios and additional features.
